@@ -8,8 +8,10 @@ import {
   StyleSheet,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import CustomButton from "../../components/CustomButton";
+import * as FileSystem from "expo-file-system/legacy";
+
+const restaurantsFile = `${FileSystem.documentDirectory}restaurants.json`;
 
 const PreFiltersScreen = ({ route, navigation }) => {
   const { participants } = route.params;
@@ -19,11 +21,18 @@ const PreFiltersScreen = ({ route, navigation }) => {
   const [delivery, setDelivery] = useState("");
 
   const handleNext = async () => {
-    const stored = await AsyncStorage.getItem("restaurants");
+    let stored = null;
+    try {
+      stored = await FileSystem.readAsStringAsync(restaurantsFile);
+    } catch (e) {
+      stored = null;
+    }
+
     if (!stored) {
       Alert.alert("No restaurants", "Please add restaurants first.");
       return;
     }
+
     const allRestaurants = JSON.parse(stored);
     const filtered = allRestaurants.filter((rest) => {
       const matchCuisine = !cuisine || rest.cuisine === cuisine;
@@ -32,6 +41,7 @@ const PreFiltersScreen = ({ route, navigation }) => {
       const matchDelivery = !delivery || rest.delivery === (delivery === "Yes");
       return matchCuisine && matchPrice && matchRating && matchDelivery;
     });
+
     if (filtered.length === 0) {
       Alert.alert(
         "No matches",
@@ -39,6 +49,7 @@ const PreFiltersScreen = ({ route, navigation }) => {
       );
       return;
     }
+
     navigation.navigate("ChoiceScreen", {
       participants,
       restaurants: filtered,

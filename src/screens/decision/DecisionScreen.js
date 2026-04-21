@@ -7,19 +7,32 @@ import {
   Alert,
   StyleSheet,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as FileSystem from "expo-file-system/legacy";
+
+const peopleFile = `${FileSystem.documentDirectory}people.json`;
+const restaurantsFile = `${FileSystem.documentDirectory}restaurants.json`;
 
 const DecisionScreen = ({ navigation }) => {
-  // Check if sufficient data exists before allowing user to proceed
   const checkAndStart = async () => {
     try {
-      // Retrieve stored people and restaurants data
-      const peopleData = await AsyncStorage.getItem("people");
-      const restaurantsData = await AsyncStorage.getItem("restaurants");
-      const people = peopleData ? JSON.parse(peopleData) : [];
-      const restaurants = restaurantsData ? JSON.parse(restaurantsData) : [];
+      let people = [];
+      let restaurants = [];
 
-      // Validate that at least one person and restaurant exist
+      try {
+        const peopleContent = await FileSystem.readAsStringAsync(peopleFile);
+        people = peopleContent ? JSON.parse(peopleContent) : [];
+      } catch (e) {
+        people = [];
+      }
+
+      try {
+        const restaurantsContent =
+          await FileSystem.readAsStringAsync(restaurantsFile);
+        restaurants = restaurantsContent ? JSON.parse(restaurantsContent) : [];
+      } catch (e) {
+        restaurants = [];
+      }
+
       if (people.length === 0 || restaurants.length === 0) {
         Alert.alert(
           "Missing Data",
@@ -28,7 +41,6 @@ const DecisionScreen = ({ navigation }) => {
         return;
       }
 
-      // Proceed to next screen
       navigation.navigate("WhosGoingScreen");
     } catch (error) {
       console.error("Error checking data:", error);
@@ -38,7 +50,6 @@ const DecisionScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {/* Touchable decision button with visual feedback */}
       <TouchableOpacity onPress={checkAndStart} activeOpacity={0.7}>
         <Image
           source={require("../../../assets/its-decision-time.android.png")}

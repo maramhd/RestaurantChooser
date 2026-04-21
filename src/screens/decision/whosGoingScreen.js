@@ -8,9 +8,11 @@ import {
   BackHandler,
   StyleSheet,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import CustomButton from "../../components/CustomButton";
 import Checkbox from "expo-checkbox";
+import * as FileSystem from "expo-file-system/legacy";
+
+const peopleFile = `${FileSystem.documentDirectory}people.json`;
 
 const WhosGoingScreen = ({ navigation }) => {
   const [people, setPeople] = useState([]);
@@ -32,11 +34,14 @@ const WhosGoingScreen = ({ navigation }) => {
   }, []);
 
   const loadPeople = async () => {
-    const stored = await AsyncStorage.getItem("people");
-    if (stored) {
-      const parsed = JSON.parse(stored);
+    try {
+      const fileContent = await FileSystem.readAsStringAsync(peopleFile);
+      const parsed = fileContent ? JSON.parse(fileContent) : [];
       setPeople(parsed);
       setSelected(new Array(parsed.length).fill(false));
+    } catch (e) {
+      setPeople([]);
+      setSelected([]);
     }
   };
 

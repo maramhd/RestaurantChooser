@@ -6,7 +6,6 @@ import { useFocusEffect } from "@react-navigation/native";
 import CustomButton from "../../components/CustomButton";
 import Toast from "react-native-toast-message";
 
-// Define people file path using Expo FileSystem API
 const peopleFile = `${FileSystem.documentDirectory}people.json`;
 
 export default function ListScreen({ navigation }) {
@@ -19,10 +18,28 @@ export default function ListScreen({ navigation }) {
         const fileContent = await FileSystem.readAsStringAsync(peopleFile);
         loaded = fileContent ? JSON.parse(fileContent) : [];
       } catch (err) {
-        // File doesn't exist yet
         loaded = [];
       }
-      setPeople(loaded);
+
+      // ✅ إصلاح أي keys مكررة تلقائياً
+      const seenKeys = new Set();
+      const fixed = loaded.map((item) => {
+        if (seenKeys.has(item.key)) {
+          item = {
+            ...item,
+            key: `p_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+          };
+        }
+        seenKeys.add(item.key);
+        return item;
+      });
+
+      // ✅ احفظ البيانات المصلحة إذا كان هناك تغيير
+      if (JSON.stringify(fixed) !== JSON.stringify(loaded)) {
+        await FileSystem.writeAsStringAsync(peopleFile, JSON.stringify(fixed));
+      }
+
+      setPeople(fixed);
     } catch (error) {
       console.error("Error loading people:", error);
       Toast.show({

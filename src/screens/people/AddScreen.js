@@ -8,19 +8,24 @@ import CustomButton from "../../components/CustomButton";
 import Toast from "react-native-toast-message";
 import * as validators from "./validators";
 
-// Define people file path using Expo FileSystem API
 const peopleFile = `${FileSystem.documentDirectory}people.json`;
 
-const initialPerson = {
-  key: `p_${new Date().getTime()}`,
+// ✅ دالة تولد key جديد في كل مرة تُستدعى
+const generateUniqueKey = () => {
+  return `p_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+};
+
+// ✅ دالة تُعيد object جديد في كل مرة
+const createInitialPerson = () => ({
+  key: generateUniqueKey(),
   firstName: "",
   lastName: "",
   relationship: "",
   errors: {},
-};
+});
 
 export default function AddScreen({ navigation }) {
-  const [person, setPerson] = useState(initialPerson);
+  const [person, setPerson] = useState(createInitialPerson);
 
   const setField = (field, value) => {
     setPerson((prev) => ({
@@ -55,25 +60,30 @@ export default function AddScreen({ navigation }) {
     }
 
     try {
-      // Read existing people from file
       let people = [];
       try {
         const fileContent = await FileSystem.readAsStringAsync(peopleFile);
         people = fileContent ? JSON.parse(fileContent) : [];
       } catch (err) {
-        // File doesn't exist yet, start with empty array
         people = [];
       }
 
-      people.push(person);
+      // ✅ إنشاء شخص جديد بـ key فريد عند الحفظ
+      const newPerson = {
+        key: generateUniqueKey(),
+        firstName: person.firstName,
+        lastName: person.lastName,
+        relationship: person.relationship,
+      };
 
-      // Save updated list to file
+      people.push(newPerson);
+
       await FileSystem.writeAsStringAsync(peopleFile, JSON.stringify(people));
 
       Toast.show({
         type: "success",
         text1: "Saved successfully",
-        text2: `Added ${person.firstName} ${person.lastName}`,
+        text2: `Added ${newPerson.firstName} ${newPerson.lastName}`,
         visibilityTime: 2000,
       });
 
