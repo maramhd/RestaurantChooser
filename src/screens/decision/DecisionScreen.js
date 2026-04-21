@@ -6,8 +6,11 @@ import {
   TouchableOpacity,
   Alert,
   StyleSheet,
+  Dimensions,
 } from "react-native";
 import * as FileSystem from "expo-file-system/legacy";
+
+const { width, height } = Dimensions.get("window");
 
 const peopleFile = `${FileSystem.documentDirectory}people.json`;
 const restaurantsFile = `${FileSystem.documentDirectory}restaurants.json`;
@@ -50,10 +53,15 @@ const DecisionScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={checkAndStart} activeOpacity={0.7}>
+      <TouchableOpacity
+        onPress={checkAndStart}
+        activeOpacity={0.7}
+        style={styles.touchable}
+      >
         <Image
-          source={require("../../../assets/its-decision-time.android.png")}
+          source={require("../../../assets/its-decision-time.ios.png")}
           style={styles.image}
+          resizeMode="contain"
         />
         <Text style={styles.text}>Tap to choose a restaurant</Text>
       </TouchableOpacity>
@@ -66,16 +74,20 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#fff",
+  },
+  touchable: {
+    alignItems: "center",
   },
   image: {
-    width: 150,
-    height: 150,
+    width: width * 0.7, // 70% من عرض الشاشة
+    height: width * 0.7, // نفس العرض لجعلها مربعة
     marginBottom: 20,
   },
   text: {
     fontSize: 18,
-    color: "blue",
-    fontWeight: "500",
+    color: "#2f80ed",
+    fontWeight: "600",
   },
 });
 
