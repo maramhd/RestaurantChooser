@@ -21,7 +21,7 @@ export default function ListScreen({ navigation }) {
         loaded = [];
       }
 
-      // ✅ إصلاح أي keys مكررة تلقائياً
+      //  إصلاح أي keys مكررة تلقائياً
       const seenKeys = new Set();
       const fixed = loaded.map((item) => {
         if (seenKeys.has(item.key)) {
@@ -34,7 +34,7 @@ export default function ListScreen({ navigation }) {
         return item;
       });
 
-      // ✅ احفظ البيانات المصلحة إذا كان هناك تغيير
+      //  احفظ البيانات المصلحة إذا كان هناك تغيير
       if (JSON.stringify(fixed) !== JSON.stringify(loaded)) {
         await FileSystem.writeAsStringAsync(peopleFile, JSON.stringify(fixed));
       }

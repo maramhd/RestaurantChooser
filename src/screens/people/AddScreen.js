@@ -10,12 +10,12 @@ import * as validators from "./validators";
 
 const peopleFile = `${FileSystem.documentDirectory}people.json`;
 
-// ✅ دالة تولد key جديد في كل مرة تُستدعى
+//  دالة تولد key جديد في كل مرة تُستدعى
 const generateUniqueKey = () => {
   return `p_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 };
 
-// ✅ دالة تُعيد object جديد في كل مرة
+//  دالة تُعيد object جديد في كل مرة
 const createInitialPerson = () => ({
   key: generateUniqueKey(),
   firstName: "",
@@ -68,7 +68,7 @@ export default function AddScreen({ navigation }) {
         people = [];
       }
 
-      // ✅ إنشاء شخص جديد بـ key فريد عند الحفظ
+      //  إنشاء شخص جديد بـ key فريد عند الحفظ
       const newPerson = {
         key: generateUniqueKey(),
         firstName: person.firstName,
