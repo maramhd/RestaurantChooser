@@ -1,24 +1,28 @@
 import React, { useState, useCallback } from "react";
 import { View, FlatList, Alert, StyleSheet, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { File, Paths } from "expo-file-system";
+import * as FileSystem from "expo-file-system/legacy";
 import { useFocusEffect } from "@react-navigation/native";
 import CustomButton from "../../components/CustomButton";
 import Toast from "react-native-toast-message";
 
-const peopleFile = new File(Paths.document, "people.json");
+// Define people file path using Expo FileSystem API
+const peopleFile = `${FileSystem.documentDirectory}people.json`;
 
 export default function ListScreen({ navigation }) {
   const [people, setPeople] = useState([]);
 
   const loadPeople = async () => {
     try {
-      if (peopleFile.exists) {
-        const data = await peopleFile.text();
-        setPeople(data ? JSON.parse(data) : []);
-      } else {
-        setPeople([]);
+      let loaded = [];
+      try {
+        const fileContent = await FileSystem.readAsStringAsync(peopleFile);
+        loaded = fileContent ? JSON.parse(fileContent) : [];
+      } catch (err) {
+        // File doesn't exist yet
+        loaded = [];
       }
+      setPeople(loaded);
     } catch (error) {
       console.error("Error loading people:", error);
       Toast.show({
@@ -47,16 +51,19 @@ export default function ListScreen({ navigation }) {
           onPress: async () => {
             try {
               const updated = people.filter((p) => p.key !== id);
-              await peopleFile.write(JSON.stringify(updated));
+              await FileSystem.writeAsStringAsync(
+                peopleFile,
+                JSON.stringify(updated),
+              );
               setPeople(updated);
               Toast.show({
-                type: "error",
+                type: "success",
                 text1: "Deleted",
                 text2: "The person has been successfully deleted.",
                 visibilityTime: 2000,
               });
             } catch (error) {
-              Alert.alert("Error", "Deletion failed");
+              Alert.alert("Error", "Deletion failed: " + error.message);
             }
           },
         },

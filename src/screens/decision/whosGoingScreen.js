@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Alert,
   BackHandler,
+  StyleSheet,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CustomButton from "../../components/CustomButton";
@@ -83,16 +84,28 @@ const WhosGoingScreen = ({ navigation }) => {
   );
 };
 
-const styles = {
-  container: { flex: 1, padding: 20, gap: 20 },
-  headline: { fontSize: 28, textAlign: "center", marginBottom: 20 },
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    gap: 20,
+  },
+  headline: {
+    fontSize: 28,
+    textAlign: "center",
+    marginBottom: 20,
+    fontWeight: "600",
+  },
   listItem: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 15,
     gap: 10,
   },
-  name: { fontSize: 18 },
-};
+  name: {
+    fontSize: 18,
+    color: "#333",
+  },
+});
 
 export default WhosGoingScreen;

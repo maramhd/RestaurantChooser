@@ -1,42 +1,48 @@
 import React, { useState, useCallback } from "react";
 import { View, FlatList, Alert, StyleSheet, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { File, Paths } from "expo-file-system";
+import * as FileSystem from "expo-file-system/legacy";
 import { useFocusEffect } from "@react-navigation/native";
 import CustomButton from "../../components/CustomButton";
 import Toast from "react-native-toast-message";
 
-const restaurantsFile = new File(Paths.document, "restaurants.json");
+// Define restaurants file path using Expo FileSystem API
+const restaurantsFile = `${FileSystem.documentDirectory}restaurants.json`;
 
 export default function ListScreen({ navigation }) {
   const [restaurants, setRestaurants] = useState([]);
 
   const loadRestaurants = async () => {
     try {
-      if (restaurantsFile.exists) {
-        const data = await restaurantsFile.text();
-        let loaded = data ? JSON.parse(data) : [];
-
-        // إزالة أي تكرار في المفاتيح (احترازي)
-        const seenKeys = new Set();
-        const unique = loaded.filter((item) => {
-          if (seenKeys.has(item.key)) {
-            console.warn(`Duplicate key found and removed: ${item.key}`);
-            return false;
-          }
-          seenKeys.add(item.key);
-          return true;
-        });
-
-        // إذا تم إزالة تكرارات، نعيد حفظ البيانات الفريدة
-        if (unique.length !== loaded.length) {
-          await restaurantsFile.write(JSON.stringify(unique));
-        }
-
-        setRestaurants(unique);
-      } else {
-        setRestaurants([]);
+      let loaded = [];
+      try {
+        const fileContent = await FileSystem.readAsStringAsync(restaurantsFile);
+        loaded = fileContent ? JSON.parse(fileContent) : [];
+      } catch (err) {
+        // File doesn't exist yet
+        loaded = [];
       }
+
+      // Remove any duplicate keys (failsafe)
+      const seenKeys = new Set();
+      const unique = loaded.filter((item) => {
+        if (seenKeys.has(item.key)) {
+          console.warn(`Duplicate key found and removed: ${item.key}`);
+          return false;
+        }
+        seenKeys.add(item.key);
+        return true;
+      });
+
+      // If duplicates were removed, save the unique data back
+      if (unique.length !== loaded.length) {
+        await FileSystem.writeAsStringAsync(
+          restaurantsFile,
+          JSON.stringify(unique),
+        );
+      }
+
+      setRestaurants(unique);
     } catch (error) {
       console.error("Error loading restaurants:", error);
       Toast.show({
@@ -62,16 +68,19 @@ export default function ListScreen({ navigation }) {
         onPress: async () => {
           try {
             const updated = restaurants.filter((r) => r.key !== id);
-            await restaurantsFile.write(JSON.stringify(updated));
+            await FileSystem.writeAsStringAsync(
+              restaurantsFile,
+              JSON.stringify(updated),
+            );
             setRestaurants(updated);
             Toast.show({
-              type: "error",
+              type: "success",
               text1: "Deleted",
               text2: "Restaurant deleted successfully",
               visibilityTime: 2000,
             });
           } catch (error) {
-            Alert.alert("Error", "Deletion failed");
+            Alert.alert("Error", "Deletion failed: " + error.message);
           }
         },
       },

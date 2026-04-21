@@ -2,15 +2,16 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Picker } from "@react-native-picker/picker";
-import { File, Paths } from "expo-file-system";
+import * as FileSystem from "expo-file-system/legacy";
 import CustomTextInput from "../../components/CustomTextInput";
 import CustomButton from "../../components/CustomButton";
 import Toast from "react-native-toast-message";
 import * as validators from "./validators";
 
-const restaurantsFile = new File(Paths.document, "restaurants.json");
+// Define restaurants file path using Expo FileSystem API
+const restaurantsFile = `${FileSystem.documentDirectory}restaurants.json`;
 
-// دالة لتوليد مفتاح فريد (يعتمد على الوقت + رقم عشوائي)
+// Generate unique key for each restaurant (timestamp + random)
 const generateUniqueKey = () => {
   return `r_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 };
@@ -67,22 +68,28 @@ export default function AddScreen({ navigation }) {
     }
 
     try {
-      // قراءة المطاعم الحالية
+      // Read existing restaurants from file
       let restaurants = [];
-      if (restaurantsFile.exists) {
-        const data = await restaurantsFile.text();
-        restaurants = data ? JSON.parse(data) : [];
+      try {
+        const fileContent = await FileSystem.readAsStringAsync(restaurantsFile);
+        restaurants = fileContent ? JSON.parse(fileContent) : [];
+      } catch (err) {
+        // File doesn't exist yet, start with empty array
+        restaurants = [];
       }
 
-      // إضافة المطعم الجديد (بمفتاح جديد)
+      // Create new restaurant with unique key
       const newRestaurant = {
         ...restaurant,
-        key: generateUniqueKey(), // تأكيد توليد مفتاح جديد وقت الحفظ
+        key: generateUniqueKey(),
       };
       restaurants.push(newRestaurant);
 
-      // حفظ القائمة
-      await restaurantsFile.write(JSON.stringify(restaurants));
+      // Save updated list to file
+      await FileSystem.writeAsStringAsync(
+        restaurantsFile,
+        JSON.stringify(restaurants),
+      );
 
       Toast.show({
         type: "success",
@@ -91,7 +98,7 @@ export default function AddScreen({ navigation }) {
         visibilityTime: 2000,
       });
 
-      // العودة بعد ظهور Toast
+      // Navigate back after toast appears
       setTimeout(() => {
         navigation.goBack();
       }, 500);

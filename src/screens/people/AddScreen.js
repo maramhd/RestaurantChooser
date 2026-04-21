@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Picker } from "@react-native-picker/picker";
-import { File, Paths } from "expo-file-system";
+import * as FileSystem from "expo-file-system/legacy";
 import CustomTextInput from "../../components/CustomTextInput";
 import CustomButton from "../../components/CustomButton";
 import Toast from "react-native-toast-message";
 import * as validators from "./validators";
 
-const peopleFile = new File(Paths.document, "people.json");
+// Define people file path using Expo FileSystem API
+const peopleFile = `${FileSystem.documentDirectory}people.json`;
 
 const initialPerson = {
   key: `p_${new Date().getTime()}`,
@@ -54,13 +55,20 @@ export default function AddScreen({ navigation }) {
     }
 
     try {
+      // Read existing people from file
       let people = [];
-      if (peopleFile.exists) {
-        const data = await peopleFile.text();
-        people = data ? JSON.parse(data) : [];
+      try {
+        const fileContent = await FileSystem.readAsStringAsync(peopleFile);
+        people = fileContent ? JSON.parse(fileContent) : [];
+      } catch (err) {
+        // File doesn't exist yet, start with empty array
+        people = [];
       }
+
       people.push(person);
-      await peopleFile.write(JSON.stringify(people));
+
+      // Save updated list to file
+      await FileSystem.writeAsStringAsync(peopleFile, JSON.stringify(people));
 
       Toast.show({
         type: "success",

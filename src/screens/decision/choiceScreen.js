@@ -7,6 +7,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  StyleSheet,
 } from "react-native";
 import CustomButton from "../../components/CustomButton";
 
@@ -188,7 +189,7 @@ const ChoiceScreen = ({ route, navigation }) => {
   );
 };
 
-const styles = {
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 20,
@@ -210,6 +211,7 @@ const styles = {
   },
   choiceScreenListItemName: {
     flex: 1,
+    fontWeight: "500",
   },
   selectedContainer: {
     flex: 1,
@@ -220,6 +222,7 @@ const styles = {
   },
   selectedName: {
     fontSize: 32,
+    fontWeight: "bold",
   },
   selectedDetails: {
     paddingTop: 80,
@@ -228,6 +231,7 @@ const styles = {
   },
   selectedDetailsLine: {
     fontSize: 18,
+    marginVertical: 8,
   },
   vetoContainer: {
     flex: 1,
@@ -240,6 +244,7 @@ const styles = {
   vetoHeadline: {
     fontSize: 32,
     fontWeight: "bold",
+    marginBottom: 20,
   },
   vetoScrollViewContainer: {
     height: "50%",
@@ -247,15 +252,17 @@ const styles = {
   vetoParticipantContainer: {
     paddingTop: 20,
     paddingBottom: 20,
+    paddingHorizontal: 20,
   },
   vetoParticipantName: {
     fontSize: 24,
+    color: "#333",
   },
   vetoButtonContainer: {
     width: "100%",
     alignItems: "center",
     paddingTop: 40,
   },
-};
+});
 
 export default ChoiceScreen;

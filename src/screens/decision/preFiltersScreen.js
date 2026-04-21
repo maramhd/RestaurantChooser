@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, ScrollView, Alert, Platform } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  Alert,
+  Platform,
+  StyleSheet,
+} from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CustomButton from "../../components/CustomButton";
@@ -96,16 +103,34 @@ const PreFiltersScreen = ({ route, navigation }) => {
   );
 };
 
-const styles = {
-  container: { flex: 1, backgroundColor: "#fff" },
-  inner: { padding: 20, gap: 10 },
-  headline: { fontSize: 30, textAlign: "center", marginBottom: 20 },
-  label: { fontSize: 16, fontWeight: "bold", marginTop: 10 },
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
+  inner: {
+    padding: 20,
+    gap: 10,
+  },
+  headline: {
+    fontSize: 30,
+    textAlign: "center",
+    marginBottom: 20,
+    fontWeight: "600",
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginTop: 10,
+    color: "#333",
+  },
   picker: {
     backgroundColor: "#f0f0f0",
     marginBottom: 10,
-    ...Platform.select({ android: { height: 50 } }),
+    ...Platform.select({
+      android: { height: 50 },
+    }),
   },
-};
+});
 
 export default PreFiltersScreen;

@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, StyleSheet } from "react-native";
 import CustomButton from "../../components/CustomButton";
 
 const PostChoiceScreen = ({ route, navigation }) => {
@@ -23,7 +23,7 @@ const PostChoiceScreen = ({ route, navigation }) => {
   );
 };
 
-const styles = {
+const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     justifyContent: "center",
@@ -31,7 +31,11 @@ const styles = {
     padding: 20,
     gap: 30,
   },
-  headline: { fontSize: 32, fontWeight: "bold" },
+  headline: {
+    fontSize: 32,
+    fontWeight: "bold",
+    color: "#333",
+  },
   box: {
     borderWidth: 1,
     borderColor: "#ccc",
@@ -40,7 +44,12 @@ const styles = {
     width: "100%",
     gap: 8,
   },
-  name: { fontSize: 24, fontWeight: "bold", marginBottom: 10 },
-};
+  name: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 10,
+    color: "#333",
+  },
+});
 
 export default PostChoiceScreen;

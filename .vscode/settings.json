@@ -1,0 +1,16 @@
+{
+  "typescript.validate.enable": false,
+  "typescript.enablePromptUseWorkspaceTsdk": false,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.expo": true
+  }
+}
