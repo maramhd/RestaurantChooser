@@ -11,9 +11,7 @@
       "resizeMode": "cover",
       "backgroundColor": "#fafafa"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
@@ -31,6 +29,24 @@
       "eas": {
         "projectId": "057e5c8f-7d68-4ca1-a69a-3c5bc6a16220"
       }
-    }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/057e5c8f-7d68-4ca1-a69a-3c5bc6a16220"
+    },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 34,
+            "targetSdkVersion": 34,
+            "buildToolsVersion": "34.0.0"
+          }
+        }
+      ]
+    ]
   }
 }
