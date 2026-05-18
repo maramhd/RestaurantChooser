@@ -6,7 +6,7 @@ import Constants from "expo-constants";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import PeopleScreen from "../screens/people/PeopleScreen";
-import DecisionScreenNavigation from "../screens/decision/decisionScreenNavigation"; // ✅ استيراد Stack Navigator
+import DecisionScreenNavigation from "../screens/decision/decisionScreenNavigation"; //  استيراد Stack Navigator
 import RestaurantsScreen from "../screens/restaurants/RestaurantsScreen";
 
 const Tab = createMaterialTopTabNavigator();
@@ -51,7 +51,7 @@ export default function MainNavigator() {
           />
           <Tab.Screen
             name="Decision"
-            component={DecisionScreenNavigation} // ✅ استخدام الـ Stack Navigator بدلاً من الشاشة المباشرة
+            component={DecisionScreenNavigation} //  استخدام الـ Stack Navigator بدلاً من الشاشة المباشرة
             options={{
               tabBarIcon: ({ color }) => (
                 <Image
